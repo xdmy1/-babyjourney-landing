@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch/mockup images at project root (not in /public)
+/ChatGPT*.webp
+/file_*.png
+/website photos *
+/index.html
