@@ -492,6 +492,7 @@ export default function SolutionSection() {
               { bg: 'linear-gradient(160deg, #fef0e5 0%, #f5d2c3 100%)', accent: '#7B3545' },
             ];
             const tone = cardTones[i] || cardTones[0];
+            const numericPrice = typeof plan.price === 'string' && plan.price.startsWith('$');
             return (
               <div
                 key={i}
@@ -581,7 +582,7 @@ export default function SolutionSection() {
                   <span
                     style={{
                       fontFamily: 'var(--font-display), sans-serif',
-                      fontSize: 'clamp(48px, 5vw, 60px)',
+                      fontSize: numericPrice ? 'clamp(48px, 5vw, 60px)' : 'clamp(30px, 3.4vw, 42px)',
                       fontWeight: 800,
                       lineHeight: 1,
                       letterSpacing: '-0.035em',
@@ -589,9 +590,11 @@ export default function SolutionSection() {
                   >
                     {plan.price}
                   </span>
-                  <span style={{ fontSize: '15px', opacity: hero ? 0.85 : 0.7, fontWeight: 500 }}>
-                    {plan.period}
-                  </span>
+                  {plan.period && (
+                    <span style={{ fontSize: '15px', opacity: hero ? 0.85 : 0.7, fontWeight: 500 }}>
+                      {plan.period}
+                    </span>
+                  )}
                 </div>
                 <div
                   aria-hidden
@@ -613,8 +616,8 @@ export default function SolutionSection() {
                     padding: 0,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 11,
-                    marginBottom: 26,
+                    gap: 9,
+                    marginBottom: 20,
                     flex: 1,
                   }}
                 >
@@ -625,16 +628,16 @@ export default function SolutionSection() {
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: 10,
-                        fontSize: '13.5px',
-                        lineHeight: 1.5,
+                        fontSize: '13px',
+                        lineHeight: 1.45,
                         color: hero ? 'rgba(255,255,255,0.93)' : '#3D2418',
                       }}
                     >
                       <span
                         style={{
-                          marginTop: 2,
-                          width: 20,
-                          height: 20,
+                          marginTop: 1,
+                          width: 18,
+                          height: 18,
                           borderRadius: '50%',
                           background: hero
                             ? 'rgba(255,255,255,0.16)'
@@ -653,6 +656,34 @@ export default function SolutionSection() {
                     </li>
                   ))}
                 </ul>
+
+                {plan.perfectFor && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 8,
+                      alignItems: 'flex-start',
+                      padding: '12px 14px',
+                      marginBottom: 18,
+                      borderRadius: 14,
+                      background: hero ? 'rgba(255,255,255,0.10)' : 'rgba(178,81,104,0.07)',
+                      border: hero ? '1px solid rgba(255,255,255,0.18)' : '1px solid rgba(178,81,104,0.14)',
+                      fontSize: '12px',
+                      lineHeight: 1.45,
+                      color: hero ? 'rgba(255,255,255,0.9)' : '#5C3D35',
+                    }}
+                  >
+                    <span style={{ fontSize: 13, lineHeight: 1.2, flexShrink: 0 }} aria-hidden>
+                      ✦
+                    </span>
+                    <span>
+                      <strong style={{ display: 'block', fontWeight: 800, marginBottom: 2, color: hero ? '#fff' : '#7B3545' }}>
+                        {s.perfectForLabel}
+                      </strong>
+                      {plan.perfectFor}
+                    </span>
+                  </div>
+                )}
 
                 <a
                   href="#"
@@ -687,6 +718,68 @@ export default function SolutionSection() {
             );
           })}
         </Reveal>
+
+        {/* Included in every plan — trust band */}
+        {s.everyPlan && (
+          <Reveal
+            variant="up"
+            style={{
+              marginTop: 'clamp(36px, 4.5vw, 56px)',
+              padding: 'clamp(24px, 3vw, 34px) clamp(20px, 3vw, 40px)',
+              borderRadius: 24,
+              background: 'rgba(255,253,245,0.6)',
+              border: '1px solid rgba(255,255,255,0.85)',
+              boxShadow: '0 12px 32px rgba(80,30,30,0.08)',
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            <div
+              className="h-display"
+              style={{
+                textAlign: 'center',
+                fontSize: 'clamp(16px, 1.6vw, 20px)',
+                fontWeight: 800,
+                color: '#2D1510',
+                marginBottom: 'clamp(16px, 2vw, 22px)',
+              }}
+            >
+              {s.everyPlan.heading}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: 'clamp(10px, 1.4vw, 16px)',
+              }}
+            >
+              {s.everyPlan.items.map((item: string, ei: number) => (
+                <span
+                  key={ei}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '9px 16px',
+                    background: 'rgba(255,255,255,0.7)',
+                    border: '1px solid rgba(178,81,104,0.16)',
+                    borderRadius: 999,
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: '#5C2030',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7B3545" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  {item}
+                </span>
+              ))}
+            </div>
+          </Reveal>
+        )}
       </div>
 
       <style>{`
