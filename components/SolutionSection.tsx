@@ -99,6 +99,7 @@ export default function SolutionSection() {
   // Auto-rotating active feature
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
   const stageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -471,6 +472,75 @@ export default function SolutionSection() {
           </div>
         </Reveal>
 
+        {/* Billing toggle — Monthly / Yearly */}
+        {s.billing && (
+          <Reveal variant="up" style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(28px, 3.5vw, 40px)' }}>
+            <div
+              role="tablist"
+              aria-label={s.pricingHeading}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: 5,
+                borderRadius: 999,
+                background: 'rgba(255,253,245,0.7)',
+                border: '1px solid rgba(255,255,255,0.85)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 6px 18px rgba(80,30,30,0.08)',
+              }}
+            >
+              {(['monthly', 'yearly'] as const).map((key) => {
+                const isOn = billing === key;
+                return (
+                  <button
+                    key={key}
+                    role="tab"
+                    aria-selected={isOn}
+                    onClick={() => setBilling(key)}
+                    style={{
+                      cursor: 'pointer',
+                      border: 'none',
+                      borderRadius: 999,
+                      padding: '10px 22px',
+                      fontFamily: 'var(--font-display), sans-serif',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      letterSpacing: '-0.005em',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      color: isOn ? '#fff' : '#7B3545',
+                      background: isOn
+                        ? 'linear-gradient(135deg, #B25168, #7B3545)'
+                        : 'transparent',
+                      boxShadow: isOn ? '0 6px 16px rgba(110,35,55,0.32)' : 'none',
+                      transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+                    }}
+                  >
+                    {s.billing[key]}
+                    {key === 'yearly' && s.billing.saveHint && (
+                      <span
+                        style={{
+                          fontSize: '10.5px',
+                          fontWeight: 800,
+                          letterSpacing: '0.04em',
+                          textTransform: 'uppercase',
+                          padding: '3px 8px',
+                          borderRadius: 999,
+                          background: isOn ? 'rgba(255,213,128,0.95)' : 'rgba(212,160,106,0.2)',
+                          color: isOn ? '#5C2030' : '#9A5A2E',
+                        }}
+                      >
+                        {s.billing.saveHint}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </Reveal>
+        )}
+
         {/* Pricing — 3 tiers, popular middle is dark hero */}
         <Reveal
           stagger
@@ -492,7 +562,11 @@ export default function SolutionSection() {
               { bg: 'linear-gradient(160deg, #fef0e5 0%, #f5d2c3 100%)', accent: '#7B3545' },
             ];
             const tone = cardTones[i] || cardTones[0];
-            const numericPrice = typeof plan.price === 'string' && plan.price.startsWith('$');
+            const active = (billing === 'yearly' ? plan.yearly : plan.monthly) || {
+              price: plan.price,
+              period: plan.period,
+            };
+            const numericPrice = typeof active.price === 'string' && /[€$]/.test(active.price);
             return (
               <div
                 key={i}
@@ -588,11 +662,11 @@ export default function SolutionSection() {
                       letterSpacing: '-0.035em',
                     }}
                   >
-                    {plan.price}
+                    {active.price}
                   </span>
-                  {plan.period && (
+                  {active.period && (
                     <span style={{ fontSize: '15px', opacity: hero ? 0.85 : 0.7, fontWeight: 500 }}>
-                      {plan.period}
+                      {active.period}
                     </span>
                   )}
                 </div>
@@ -718,6 +792,29 @@ export default function SolutionSection() {
             );
           })}
         </Reveal>
+
+        {/* Legacy footnote */}
+        {s.legacyNote && (
+          <Reveal
+            variant="up"
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              gap: 7,
+              maxWidth: 620,
+              margin: 'clamp(20px, 2.5vw, 28px) auto 0',
+              textAlign: 'center',
+              fontSize: '12.5px',
+              lineHeight: 1.5,
+              fontStyle: 'italic',
+              color: '#7B5548',
+            }}
+          >
+            <span aria-hidden style={{ fontStyle: 'normal' }}>✦</span>
+            <span>{s.legacyNote}</span>
+          </Reveal>
+        )}
 
         {/* Included in every plan — trust band */}
         {s.everyPlan && (
